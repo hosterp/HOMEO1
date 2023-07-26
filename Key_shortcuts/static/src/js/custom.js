@@ -79,12 +79,20 @@ $.shortcut('16', function() {
 //		}
 //	});
 //});
+$.shortcut('123', function() {
+    if (confirm("if you want to save?")) {
+        $('.oe_form_button_save').each(function() {
+            if($(this).parents('div:hidden').length == 0){
+                    $(this).trigger('click');
 
+            }
+        });
+        txt = "You pressed OK!";
+    } else {
+      txt = "You pressed Cancel!";
+    }
 
-
-
-
-
+});
 $.shortcut('121', function() {
 	$('.oe_form_button_save').each(function() {
 		if($(this).parents('div:hidden').length == 0){
@@ -164,7 +172,7 @@ $.shortcut('121', function() {
      quantityField.click();
      }
      let lastKeyPressTime = 0;
-    const doubleClickInterval = 500; // Time interval to consider as a double click (in milliseconds)
+    const doubleClickInterval = 200; // Time interval to consider as a double click (in milliseconds)
 
     quantity = $('[id^="DataTables_Table_"] tbody td[data-field="quantity_selected"]');
     $(document).on('keyup', quantity, function (event) {
