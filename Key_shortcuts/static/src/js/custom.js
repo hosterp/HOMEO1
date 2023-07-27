@@ -172,7 +172,7 @@ $.shortcut('121', function() {
      quantityField.click();
      }
      let lastKeyPressTime = 0;
-    const doubleClickInterval = 200; // Time interval to consider as a double click (in milliseconds)
+    const doubleClickInterval = 500; // Time interval to consider as a double click (in milliseconds)
 
     quantity = $('[id^="DataTables_Table_"] tbody td[data-field="quantity_selected"]');
     $(document).on('keyup', quantity, function (event) {
