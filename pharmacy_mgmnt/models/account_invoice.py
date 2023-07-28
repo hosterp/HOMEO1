@@ -1173,7 +1173,64 @@ class AccountInvoice(models.Model):
     cus_invoice = fields.Boolean("Customer Invoice?")
     hold_invoice_id = fields.Many2one("account.invoice", domain=[('type', '=', 'out_invoice'), ('hold_invoice', '=', True)])
 
-    # @api.onchange('hold_invoice_id')
+
+    @api.multi
+    def previous_invoice(self):
+        if self.id:
+            return {
+                'view_mode': 'form',
+                'res_id': self.id - 1,
+                'res_model': 'account.invoice',
+                'view_id': self.env.ref('account.invoice_form').id,
+                'type': 'ir.actions.act_window',
+                'context': {'type': 'out_invoice'},
+                'target': 'current',
+                'clear': 1,
+            }
+        else:
+            raise Warning("Create a new record")
+        # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        # redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
+        #     base_url, self.id - 1)
+        # return {
+        #     'type': 'ir.actions.act_url',
+        #     'url': redirect_url,
+        #     'target': 'self',
+        # }
+
+    @api.multi
+    def next_invoice(self):
+        next_inv = self.env['account.invoice'].search(
+            [(('id', '=', self.id + 1))])
+        if next_inv:
+            return {
+                'view_mode': 'form',
+                'res_id': self.id + 1,
+                'res_model': 'account.invoice',
+                'view_id': self.env.ref('account.invoice_form').id,
+                'type': 'ir.actions.act_window',
+                'context': {'type': 'out_invoice'},
+                'target': 'current',
+                'clear': 1,
+            }
+        else:
+            raise Warning("Create a new record")
+        # if self.id + 1:
+        #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        #     redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
+        #         base_url, self.id + 1)
+        #     return {
+        #         'type': 'ir.actions.act_url',
+        #         'url': redirect_url,
+        #         'target': 'self',
+        #     }
+        # else:
+        #     return {
+        #         'type': 'ir.actions.act_window.message',
+        #         'message': _('No customer invoice found '),
+        #     }
+
+
     @api.multi
     def onchange_hold_invoice_id(self):
         if self.hold_invoice_id:
@@ -1199,21 +1256,7 @@ class AccountInvoice(models.Model):
             # }
         else:
             pass
-        # redirect_url = "http://0.0.0.0:8071/web#page=0&limit=80&view_type=list&model=account.invoice&menu_id=331&action=400"
-        # return {
-        #     'type': 'ir.actions.act_url',
-        #     'url': redirect_url,
-        #     'target': 'self',
-        # }
-        # return {
-        #     'name': _('Holding Invoice'),
-        #     'view_type': 'form',
-        #     'view_mode': 'form',
-        #     'res_model': 'account.invoice',
-        #     'res_id': (self.hold_invoice_id.id),
-        #     'view_id': False,
-        #     'type': 'ir.actions.act_window',
-        # }
+
 
     @api.onchange('financial_year')
     def onchange_pay_mode(self):

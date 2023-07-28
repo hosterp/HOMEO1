@@ -75,12 +75,19 @@
                 </xpath>
 
                 <xpath expr="//group[@class='oe_subtotal_footer oe_right']" position="replace">
-                    <button name="onchange_hold_invoice_id" string="Import Holding Invoice" type="object"
+                    <field name="hold_invoice_id" style="width:13%%" placeholder="Select Hold Bill"
+                           attrs="{'invisible': [('cus_invoice', '!=', True)]}"/>
+                    <button name="onchange_hold_invoice_id" string="Import Hold Bill" type="object"
                             attrs="{'invisible': [('cus_invoice', '!=', True)]}"/>
+                    <button name="previous_invoice" string="Prev" type="object" style="margin-left: 300px"
+                            attrs="{'invisible': [('cus_invoice', '!=', True)]}"/>
+                    <field name="number2" style="width:2%%; margin-left: 10px" readonly="1"/>
+                    <button name="next_invoice" string="Next" type="object"
+                            attrs="{'invisible': [('cus_invoice', '!=', True)]}" style="margin-left: 50px"/>
+
                     <group col="4">
                         <group name="discount">
-                            <field name="hold_invoice_id" style="width:20%%" string="Holding Invoice"
-                                   attrs="{'invisible': [('cus_invoice', '!=', True)]}"/>
+
                             <field name="discount_category" attrs="{'readonly': [('state', '!=', 'draft')]}"
                                    style="width:20%%"/>
                             <field name="discount_type" style="width:20%%" readonly="1"/>
