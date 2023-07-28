@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-         <record id="hide_balance_field_register_payment" model="ir.ui.view">
+        <record id="hide_balance_field_register_payment" model="ir.ui.view">
             <field name="name">account.voucher.form</field>
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_dialog_form"/>
@@ -75,8 +75,12 @@
                 </xpath>
 
                 <xpath expr="//group[@class='oe_subtotal_footer oe_right']" position="replace">
+                    <button name="onchange_hold_invoice_id" string="Import Holding Invoice" type="object"
+                            attrs="{'invisible': [('cus_invoice', '!=', True)]}"/>
                     <group col="4">
                         <group name="discount">
+                            <field name="hold_invoice_id" style="width:20%%" string="Holding Invoice"
+                                   attrs="{'invisible': [('cus_invoice', '!=', True)]}"/>
                             <field name="discount_category" attrs="{'readonly': [('state', '!=', 'draft')]}"
                                    style="width:20%%"/>
                             <field name="discount_type" style="width:20%%" readonly="1"/>

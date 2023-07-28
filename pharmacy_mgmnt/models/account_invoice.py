@@ -1171,6 +1171,49 @@ class AccountInvoice(models.Model):
     packing_invoice = fields.Boolean("Packing Slip?")
     hold_invoice = fields.Boolean("Holding Invoice?")
     cus_invoice = fields.Boolean("Customer Invoice?")
+    hold_invoice_id = fields.Many2one("account.invoice", domain=[('type', '=', 'out_invoice'), ('hold_invoice', '=', True)])
+
+    # @api.onchange('hold_invoice_id')
+    @api.multi
+    def onchange_hold_invoice_id(self):
+        if self.hold_invoice_id:
+            # hold = self.env['account.invoice'].search([('id','=',self.hold_invoice_id.id),('hold_invoice','=',True),('type','=','out_invoice')])
+            # print(hold.hold_invoice,"hold")
+            # print(hold.id,"hold.id")
+            # print(self.hold_invoice_id.id,"self.hold_invoice_id")
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=347&action=408" % (
+                base_url, self.hold_invoice_id.id)
+            return {
+                'type': 'ir.actions.act_url',
+                'url': redirect_url,
+                'target': 'self',
+            }
+            # return {
+            #     'name': _('Holding Invoice'),  # Title of the wizard
+            #     'view_mode': 'form',  # Display the wizard in form view
+            #     'res_id': self.hold_invoice_id.id,  # ID of the created wizard record
+            #     'res_model': 'account.invoice',  # Model of the wizard
+            #     'type': 'ir.actions.act_window',
+            #     'target': 'self',  # Open the wizard in a new window or tab
+            # }
+        else:
+            pass
+        # redirect_url = "http://0.0.0.0:8071/web#page=0&limit=80&view_type=list&model=account.invoice&menu_id=331&action=400"
+        # return {
+        #     'type': 'ir.actions.act_url',
+        #     'url': redirect_url,
+        #     'target': 'self',
+        # }
+        # return {
+        #     'name': _('Holding Invoice'),
+        #     'view_type': 'form',
+        #     'view_mode': 'form',
+        #     'res_model': 'account.invoice',
+        #     'res_id': (self.hold_invoice_id.id),
+        #     'view_id': False,
+        #     'type': 'ir.actions.act_window',
+        # }
 
     @api.onchange('financial_year')
     def onchange_pay_mode(self):
