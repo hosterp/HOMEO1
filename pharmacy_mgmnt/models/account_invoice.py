@@ -1172,6 +1172,7 @@ class AccountInvoice(models.Model):
     hold_invoice = fields.Boolean("Holding Invoice?")
     cus_invoice = fields.Boolean("Customer Invoice?")
     hold_invoice_id = fields.Many2one("account.invoice", domain=[('type', '=', 'out_invoice'), ('hold_invoice', '=', True)])
+    partner_id=fields.Many2one('res.partner',default=50)
 
 
     @api.multi
