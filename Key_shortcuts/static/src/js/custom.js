@@ -107,37 +107,24 @@ $.shortcut('121', function() {
 		}
 	});
 });
+//        let createButton = $(".oe_form_field .oe_form_field_many2one .oe_form_field_with_button .oe_form_required");
+//        let createButtonClicked = false;
+//
+//        $(document).on('click', createButton, function (event) {
+////            alert('click');
+//          if (!createButtonClicked) {
+//            createButtonClicked = true;
+//            setTimeout(function() {
+//              $(".oe_form_button_save").trigger("click");
+//                createButtonClicked = false;
+//            }, 1000);
+//          }
+//        });
 
-//--VIN
-//$(document).on('keydown', '#oe-field-input-14', function(e) {
-//if (event.keyCode === 39) { // Right arrow key code is 39
-//      var dropdownButton = $('.oe_m2o_drop_down_button img');
-//      var clickEvent = new MouseEvent('click', {
-//        bubbles: true,
-//        cancelable: true,
-//        view: window
-//      });
-//      dropdownButton[0].dispatchEvent(clickEvent);
-//    }
-//});
 
 
-//$.shortcut('45', function() {
-//	$('.oe_form_field_one2many_list_row_add').each(function() {
-//		if($(this).parents('div:hidden').length == 0){
-//			$(this).trigger('click');
-//		}
-//	});
-//})
-//$.shortcut('39', function(event) {
-//    $('oe_list_header_many2one oe_sortable').each(function() {
-//    event.preventDefault();
-//    console.log('right arrow')
-//        if($(this).parents('div:hidden').length == 0){
-//			$(this).trigger('click');
-//		}
-//    });
-//});
+
+//            location.reload();
 
 
 //console.log('f3');
@@ -163,6 +150,7 @@ $.shortcut('121', function() {
     newClass = newClass.substring(newClass.indexOf('&action=') + 1).replace('=', '-num');
     $('html').addClass(newClass);
     // For adding tr to supplier table
+
 
 //VINCODES
 
