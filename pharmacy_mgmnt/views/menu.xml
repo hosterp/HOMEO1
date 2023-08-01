@@ -369,7 +369,7 @@
         <!--        ########################################-->
         <!--        #############################################-->
 
-         <record id="view_account_invoice_search_filter_inherit" model="ir.ui.view">
+        <record id="view_account_invoice_search_filter_inherit" model="ir.ui.view">
             <field name="name">account.invoice.search.inherit</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.view_account_invoice_filter"/>
@@ -1028,6 +1028,8 @@
                     <header>
                         <button name="action_payment_all" string="Pay" type="object" class="oe_highlight"
                                 states="draft"/>
+                        <button name="print_customer_payment_report" string="Print Report" type="object"
+                                class="oe_highlight"/>
                         <button class="oe_highlight" type="object" name="open_tree_view_history" string="Sale History"
                                 states="draft,paid"/>
                         <field name="state" widget="statusbar"/>

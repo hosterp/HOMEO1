@@ -11,7 +11,7 @@
     'company': 'Hiworth Solutions',
     'website': "https://www.hiworthsolutions.com",
     'category': 'Accounting',
-    'depends': ['base', 'account', 'stock', 'purchase', 'sale',
+    'depends': ['base', 'account', 'stock', 'purchase', 'sale','report',
                 'report_xlsx',
                 'account_accountant', 'product_expiry', 'product_expiry_simple', 'Key_shortcuts',],
     'data': [
@@ -36,6 +36,7 @@
         'report/supplier_inv_history.xml',
         'report/purchase_report.xml',
         'report/tax_report_excel_to_pdf.xml',
+        'report/customer_payment_report.xml',
 
         'report/inherit_supplier_invoice_report.xml',
 
