@@ -1172,7 +1172,8 @@ class AccountInvoice(models.Model):
     hold_invoice = fields.Boolean("Holding Invoice?")
     cus_invoice = fields.Boolean("Customer Invoice?")
     hold_invoice_id = fields.Many2one("account.invoice", domain=[('type', '=', 'out_invoice'), ('hold_invoice', '=', True)])
-    partner_id=fields.Many2one('res.partner',default=50)
+    partner_id=fields.Many2one('res.partner',default=1)
+    cus_inv_number = fields.Char()
 
 
     @api.multi
@@ -1262,6 +1263,61 @@ class AccountInvoice(models.Model):
     @api.onchange('financial_year')
     def onchange_pay_mode(self):
         self.date_invoice = date.today()
+        if self.type == 'out_invoice' and self.cus_invoice == True:
+            res1 = self.env['account.invoice'].search(
+                [('type', '=', 'out_invoice'), ('cus_invoice', '=', True)], limit=1)
+            number = self.env['ir.sequence'].get('customer.account.invoice')
+            self.number2 = number
+            self.cus_inv_number = number
+            self.seq = 1
+            if res1:
+                last_index = int(res1.number2.split('/')[1]) + 1
+                self.number2 = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                self.cus_inv_number = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                self.seq = res1.seq + 1
+            else:
+                pass
+        if self.type == 'out_invoice' and self.hold_invoice == True:
+            res1 = self.env['account.invoice'].search(
+                [('type', '=', 'out_invoice'), ('hold_invoice', '=', True)], limit=1)
+            number = self.env['ir.sequence'].get('holding.invoice')
+            self.number2 = number
+            self.cus_inv_number = number
+            self.seq = 1
+            if res1:
+                last_index = int(res1.number2.split('/')[1]) + 1
+                self.number2 = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                self.cus_inv_number = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                self.seq = res1.seq + 1
+            else:
+                pass
+        if self.type == 'out_invoice' and self.packing_invoice == True:
+            res1 = self.env['account.invoice'].search(
+                [('type', '=', 'out_invoice'), ('packing_invoice', '=', True)], limit=1)
+            number = self.env['ir.sequence'].get('packing.slip.invoice')
+            self.number2 = number
+            self.cus_inv_number = number
+            self.seq = 1
+            if res1:
+                last_index = int(res1.number2.split('/')[1]) + 1
+                self.number2 = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                self.cus_inv_number = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                self.seq = res1.seq + 1
+            else:
+                pass
+        if self.type == 'in_invoice':
+            res1 = self.env['account.invoice'].search(
+                [('type', '=', 'in_invoice')], limit=1)
+            number = self.env['ir.sequence'].get('supplier.account.invoice')
+            self.number2 = number
+            self.seq = 1
+            if res1:
+                last_index = int(res1.number2.split('/')[1]) + 1
+                self.number2 = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                self.seq = res1.seq + 1
+            else:
+                pass
+        # self.number2 = self.env['ir.sequence'].next_by_code('customer.account.invoice')
 
     @api.multi
     def name_get(self):
@@ -1426,7 +1482,7 @@ class AccountInvoice(models.Model):
     @api.multi
     def import_to_invoice(self):
         for record in self:
-            record.state = 'draft'
+            # record.state = 'draft'
             res = self.env['account.invoice'].search(
                 [('type', '=', 'out_invoice'), ('cus_invoice', '=', True)], limit=1)
             last_index = int(res.number2.split('/')[1]) + 1
@@ -1435,6 +1491,7 @@ class AccountInvoice(models.Model):
             record.packing_invoice = False
             record.hold_invoice = False
             record.cus_invoice = True
+            record.state = "draft"
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         invoice_id = self.id
         redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (

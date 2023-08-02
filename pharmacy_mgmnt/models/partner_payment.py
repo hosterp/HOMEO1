@@ -56,8 +56,8 @@ class PartnerPayment(models.Model):
                 rec.invoice_ids = []
                 list = []
                 invoices = self.env['account.invoice'].search(
-                    [('partner_id', '=', rec.partner_id.id),('res_person', '=', rec.res_person_id.id),
-                     ('packing_slip', '=', False), ('holding_invoice', '=', False)])
+                    [('partner_id', '=', rec.partner_id.id), ('res_person', '=', rec.res_person_id.id),
+                     ])
                 if invoices:
                     for line in invoices:
                         if line.state == 'open':
@@ -92,7 +92,7 @@ class PartnerPayment(models.Model):
                     list = []
                     invoices = self.env['account.invoice'].search(
                         [('partner_id', '=', rec.partner_id.id),
-                         ('packing_slip', '=', False), ('holding_invoice', '=', False)])
+                         ])
                     if invoices:
                         for line in invoices:
                             if line.state == 'open':
@@ -129,8 +129,8 @@ class PartnerPayment(models.Model):
                 rec.invoice_ids = []
                 list = []
                 invoices = self.env['account.invoice'].search(
-                    [('partner_id', '=', rec.partner_id.id),('res_person', '=', rec.res_person_id.id),
-                     ('packing_slip', '=', False), ('holding_invoice', '=', False)])
+                    [('partner_id', '=', rec.partner_id.id), ('res_person', '=', rec.res_person_id.id),
+                     ])
                 if invoices:
                     for line in invoices:
                         if line.state == 'open':
@@ -165,7 +165,7 @@ class PartnerPayment(models.Model):
                     list = []
                     invoices = self.env['account.invoice'].search(
                         [('res_person', '=', rec.res_person_id.id),
-                         ('packing_slip', '=', False), ('holding_invoice', '=', False)])
+                         ])
                     if invoices:
                         for line in invoices:
                             if line.state == 'open':
@@ -194,8 +194,7 @@ class PartnerPayment(models.Model):
             else:
                 pass
 
-
-# #     -----------------------------
+    # #     -----------------------------
     #
     # @api.onchange('res_person_id', 'partner_id')
     # def onchange_id(self):
@@ -342,6 +341,7 @@ class PartnerPayment(models.Model):
         assert len(self) == 1
         self.sent = True
         return self.env['report'].get_action(self, 'pharmacy_mgmnt.customer_payment_invoice')
+
     @api.onchange('invoice_ids')
     def onchange_compute(self):
         for record in self:

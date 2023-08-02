@@ -168,12 +168,12 @@
                 <xpath expr="//field[@name='invoice_line']/tree/field[@name='account_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='number']" position="after">
-                    <field name="number2" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='number']" position="replace">
-                    <field name="number2" class="oe_inline" readonly="1"/>
-                </xpath>
+<!--                <xpath expr="//field[@name='number']" position="after">-->
+<!--                    <field name="number2" invisible="1"/>-->
+<!--                </xpath>-->
+<!--                <xpath expr="//field[@name='number']" position="replace">-->
+<!--                    <field name="number2" class="oe_inline" readonly="1"/>-->
+<!--                </xpath>-->
                 <!--                 <xpath expr="//field[@name='invoice_line']" position="before">-->
                 <!--                     <button name="%(wiz_tree)d" type="action" string="Search Stock" class="css_hiworth"/>-->
                 <!--                     <field name="search_items" class="flexdatalist-json" invisible="1"/>-->

@@ -70,10 +70,13 @@
                 <xpath expr="//field[@name='discount']" position="attributes">
                     <attribute name="digits">(16, 2)</attribute>
                 </xpath>
+
                 <xpath expr="//field[@name='discount']" position="attributes">
                     <attribute name="readonly">0</attribute>
                 </xpath>
-
+                <xpath expr="//field[@name='number']" position="before">
+                    <field name="cus_inv_number" nolabel="1" readonly="1"/>
+                </xpath>
                 <xpath expr="//group[@class='oe_subtotal_footer oe_right']" position="replace">
                     <field name="hold_invoice_id" style="width:13%%" placeholder="Select Hold Bill"
                            attrs="{'invisible': [('cus_invoice', '!=', True)]}"/>
