@@ -676,7 +676,8 @@
                         <group>
                             <group>
                                 <field name="invoice_ids" widget="many2many_tags"
-                                       domain="[('state', '=', 'open'),('type', '=', 'out_invoice')]"/>
+                                     domain = "[('state', '=', 'open'), ('type', '=', 'out_invoice'),('partner_id', 'ilike', name)]"
+                                        />
                             </group>
                         </group>
 

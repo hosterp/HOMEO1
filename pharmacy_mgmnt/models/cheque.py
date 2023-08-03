@@ -16,7 +16,7 @@ class ChequeTransactions(models.Model):
 
     s_no = fields.Char('Serial Number', readonly=True, required=True, copy=False, default='New')
     name = fields.Many2one('res.partner', 'Name', required=1)
-    t_date = fields.Date('Date', required=1)
+    t_date = fields.Date('Date',default=fields.Date.today, required=1)
     cheque_no = fields.Char('Cheque Number')
     cheque_date = fields.Date('Cheque Date')
     deposit_date = fields.Date('Deposit Date')
@@ -29,7 +29,9 @@ class ChequeTransactions(models.Model):
     ifsc = fields.Char('IFSC')
     state = fields.Selection([('draft', 'Draft'), ('post', 'Posted'), ('bounce', 'Bounced'),]
                              , required=True, default='draft')
-    invoice_ids = fields.Many2many('account.invoice', string="Select Invoices")
+    invoice_ids = fields.Many2many('account.invoice', string="Select Invoices",default='')
+
+
 
     @api.depends('cheque_amount','invoice_ids')
     def _get_balace_amt(self):
