@@ -57,11 +57,12 @@
                                     </center>
                                     <center>
                                         <h4>
-                                            <b>TAX INVOICE
-                                            </b>
+<!--                                            <b>TAX INVOICE-->
+<!--                                            </b>-->
                                         </h4>
                                     </center>
                                 </div>
+                                <br></br>
                                 <div>
                                     <div class="left-aligned-div">
                                         <div t-if="o.date">
@@ -79,6 +80,8 @@
                                     </div>
                                 </div>
                                 <br></br>
+                                <br></br>
+
                                 <style>
                                     .right-aligned-div {
                                     text-align: left;
