@@ -2,6 +2,7 @@ from openerp import models, fields, api, _
 from openerp.osv import osv
 from openerp.tools import safe_eval
 from datetime import datetime
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 
@@ -30,7 +31,7 @@ class PartnerPayment(models.Model):
     res_person_id = fields.Many2one('res.partner', domain=[('res_person_id', '=', True)])
     partner_id = fields.Many2one('res.partner', domain=[('customer', '=', True), ('res_person_id', '=', False)])
     reference_number = fields.Char()
-    date = fields.Date()
+    date = fields.Date(default=fields.Date.today)
     payment_method = fields.Selection([('cheque', 'Cheque'), ('cash', 'Cash')], string="Mode of Payment")
     cheque_no = fields.Char()
     cheque_date = fields.Date()
