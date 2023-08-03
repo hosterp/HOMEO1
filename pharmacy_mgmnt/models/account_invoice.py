@@ -1572,10 +1572,12 @@ class AccountInvoice(models.Model):
                 [('type', '=', 'out_invoice'), ('cus_invoice', '=', True)], limit=1)
             number = self.env['ir.sequence'].get('customer.account.invoice')
             vals['number2'] = number
+            vals['cus_inv_number'] = number
             vals['seq'] = 1
             if res1:
                 last_index = int(res1.number2.split('/')[1]) + 1
                 vals['number2'] = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                vals['cus_inv_number'] = res1.number2.split('/')[0] + "/" + str(last_index).zfill(4)
                 vals['seq'] = res1.seq + 1
             else:
                 pass
@@ -1584,10 +1586,12 @@ class AccountInvoice(models.Model):
                 [('type', '=', 'out_invoice'), ('packing_invoice', '=', True), ('hold_invoice', '=', False),], limit=1)
             number = self.env['ir.sequence'].get('packing.slip.invoice')
             vals['number2'] = number
+            vals['cus_inv_number'] = number
             vals['seq'] = 1
             if res2:
                 last_index = int(res2.number2.split('/')[1]) + 1
                 vals['number2'] = res2.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                vals['cus_inv_number'] = res2.number2.split('/')[0] + "/" + str(last_index).zfill(4)
                 vals['seq'] = res2.seq + 1
             else:
                 pass
@@ -1596,10 +1600,12 @@ class AccountInvoice(models.Model):
                 [('type', '=', 'out_invoice'), ('hold_invoice', '=', True), ('packing_invoice', '=', False)], limit=1)
             number = self.env['ir.sequence'].get('holding.invoice')
             vals['number2'] = number
+            vals['cus_inv_number'] = number
             vals['seq'] = 1
             if res3:
                 last_index = int(res3.number2.split('/')[1]) + 1
                 vals['number2'] = res3.number2.split('/')[0] + "/" + str(last_index).zfill(4)
+                vals['cus_inv_number'] = res3.number2.split('/')[0] + "/" + str(last_index).zfill(4)
                 vals['seq'] = res3.seq + 1
             else:
                 pass
