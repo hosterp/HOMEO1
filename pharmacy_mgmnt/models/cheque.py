@@ -16,12 +16,12 @@ class ChequeTransactions(models.Model):
 
     s_no = fields.Char('Serial Number', readonly=True, required=True, copy=False, default='New')
     name = fields.Many2one('res.partner', 'Name', required=1)
-    t_date = fields.Date('Date',default=fields.Date.today, required=1)
+    t_date = fields.Date('Date',default=fields.Date.today)
     cheque_no = fields.Char('Cheque Number')
     cheque_date = fields.Date('Cheque Date')
     deposit_date = fields.Date('Deposit Date')
     clearance_date = fields.Date('Clearance Date')
-    cheque_amount = fields.Float('Cheque Amount',required=1)
+    cheque_amount = fields.Float('Cheque Amount')
     invoice_amount = fields.Float('Invoice Amount', compute="_get_balace_amt")
     balance = fields.Float('Balance', compute="_get_balace_amt")
     bank = fields.Char('Bank')
@@ -44,10 +44,10 @@ class ChequeTransactions(models.Model):
             if rec.invoice_ids:
                 rec.invoice_amount = sum(rec.invoice_ids.mapped('amount_total'))
                 balance = rec.cheque_amount - rec.invoice_amount
-                if rec.cheque_amount != rec.invoice_amount:
-                    raise except_orm(_('Partial Payments not possible!'), ('Check Customer Payments'))
-                else:
-                    pass
+                # if rec.cheque_amount != rec.invoice_amount:
+                #     raise except_orm(_('Partial Payments not possible!'), ('Check Customer Payments'))
+                # else:
+                #     pass
                 if balance<0 :
                     rec.balance = 0
                 else:
