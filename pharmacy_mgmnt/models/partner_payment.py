@@ -13,13 +13,70 @@ class InvoiceDetails(models.Model):
     invoice_id = fields.Many2one('account.invoice', required=True)
     partner_payment_id = fields.Many2one('partner.payment')
     select = fields.Boolean()
+    de_residual = fields.Float()
+    calc = fields.Float()
 
-    # @api.model
-    # def create(self, vals):
-    #     if not vals.get('account_id'):
-    #         account_id = self.env['account.invoice'].browse(int(vals.get('invoice_id'))).account_id.id
-    #         vals.update({'account_id': account_id})
-    #     return super(InvoiceDetails, self).create(vals)
+    # def onchange_de_residual(self):
+    #     print('shooo')
+
+    @api.multi
+    @api.onchange("select")
+    def onchange_select(self):
+        payment_amt = 0
+        if self.partner_payment_id.calc_amount:
+            payment_amt = self.partner_payment_id.calc_amount
+        else:
+            payment_amt = self.partner_payment_id.payment_amount
+        for records in self._origin:
+            residual = records.residual
+            if residual < payment_amt:
+                ref = self.partner_payment_id.reference_number
+                data = self.env['partner.payment'].search([('reference_number', '=', ref)])
+                new_amount = data.payment_amount - records.residual
+                self._origin.write({
+                    'residual': 0,
+                    'state': 'paid',
+                })
+                data.write({
+                    'calc_amount': new_amount,
+                })
+                self.env.cr.commit()
+                # self.env.cr.commit(data)
+                return
+            else:
+                pass
+            if residual > payment_amt:
+                raise osv.except_osv(_('Warning!'), _("Press PAY button to complete the payment"))
+
+            # ref = self.partner_payment_id.reference_number
+                # residual = residual - payment_amt
+                # data = self.env['partner.payment'].search([('reference_number', '=', ref)])
+                # data.write({
+                #     'calc_amount': 0,
+                # })
+                # self.env.cr.commit()
+                # self._origin.write({
+                #     'residual': 0,
+                #     'state': 'open',
+                # })
+
+            else:
+                pass
+            if residual == payment_amt:
+                ref = self.partner_payment_id.reference_number
+                payment_amt = payment_amt - residual
+                data = self.env['partner.payment'].search([('reference_number', '=', ref)])
+                data.write({
+                    'calc_amount': 0,
+                    # 'account_id': 25,
+                })
+                self.env.cr.commit()
+                self._origin.write({
+                        'residual': 0,
+                        'state': 'paid',
+                    })
+            else:
+                pass
 
 
 class PartnerPayment(models.Model):
@@ -39,13 +96,93 @@ class PartnerPayment(models.Model):
     # total_amount = fields.Float(compute='_compute_amount')
     total_amount = fields.Float(compute='_compute_value', store=True)
     payment_amount = fields.Float()
+    pays = fields.Float(default=0)
     balance_amount = fields.Float(compute='_compute_balance')
-    # balance_amount = fields.Float()
+    calc_amount = fields.Float()
     invoice_ids = fields.One2many('invoice.details', 'partner_payment_id', readonly=False,
                                   store=True)
     # invoice_ids = fields.One2many('invoice.details', 'partner_payment_id', compute='generate_lines', readonly=False,
     #                               store=True)
     state = fields.Selection([('new', 'New'), ('draft', 'Draft'), ('paid', 'Paid')])
+
+    @api.onchange('payment_amount')
+    def onchange_payment_amount(self):
+        self.calc_amount = self.payment_amount
+
+    # @api.onchange('balance_amount')
+    # def onchange_payment_amount(self):
+    #     # self.pays += 1
+    #     for record in self:
+    #         if record.invoice_ids:
+    #             total = sum(line.residual for line in record.invoice_ids)
+    #             balance = sum(line.amount_total for line in record.invoice_ids)
+    #             calc_value = record.payment_amount - (balance - total)
+    #             print(total, 'totaltotal')
+    #             print(balance, 'balancebalance')
+    #             if calc_value <= 0:
+    #                 self.calc_amount = self.payment_amount
+    #             else:
+    #                 self.calc_amount = calc_value
+    #             print(calc_value, 'calc_valuecalc_valuecalc_value')
+    #             print(self.pays,'payspausysy')
+
+    # def onchange_de_residual(self):
+    #     print('shooo')
+    # @api.multi
+    # @api.onchange('payment_amount')
+    # def onchange_payment_amount(self):
+    #     self.calc_amount = self.payment_amount
+    #     print(self.calc_amount,'self.calc_amountself.calc_amountself.calc_amountself.calc_amount')
+    #         if record.select == True:
+    #             print(record.partner_id.name,record.residual)
+    # invoice = record.invoice_id
+    # residual = 0
+    # payment_amount = 0
+    # for recs in invoice:
+    #     # residual = recs.residual
+    #     # payment_amount1 =  self.payment_amount
+    #     # print(residual)
+    #     # print(payment_amount1)
+    #     if recs.residual > self.payment_amount:
+    #         recs.residual = recs.residual - self.payment_amount
+    #         print(recs.residual, "1")
+    #         # self.payment_amount = 00.0
+    #     if recs.residual == self.payment_amount:
+    #         recs.residual = 00.0
+    #         recs.state = 'paid'
+    #         print(recs.residual, "2")
+    #     if recs.residual < self.payment_amount:
+    #         self.payment_amount = self.payment_amount - recs.residual
+    #         recs.residual = 00.0
+    #         recs.state = 'paid'
+    #         print(recs.residual, "3")
+
+    # res_amount = recs.residual
+    # recs.residual -= amount
+    # amount -= res_amount
+    # print( recs.residual," recs.residual")
+    # print(amount,"amount")
+    # pay_amt = self.payment_amount
+    # for rec in self.invoice_ids:
+    #     print(pay_amt, "0")
+    #     if rec.select == True:
+    #         if rec.residual > float(pay_amt):
+    #             rec.residual -= float(pay_amt)
+    #             print(rec.residual,"1")
+    #             print(pay_amt,"1")
+    #             pay_amt = 0.0
+    #         if rec.residual == pay_amt:
+    #             rec.residual = 0.0
+    #             pay_amt = 0.0
+    #             rec.state = 'paid'
+    #             print(rec.residual, "2")
+    #             print(pay_amt, "2")
+    #         if rec.residual < float(pay_amt):
+    #             pay_amt -= rec.residual
+    #             rec.residual = 0.0
+    #             rec.state = 'paid'
+    #             print(rec.residual, "3")
+    #             print(pay_amt, "3")
 
     # modified code
     #
@@ -70,6 +207,7 @@ class PartnerPayment(models.Model):
                                                 'amount_total': line.amount_total,
                                                 'amount_untaxed': line.amount_untaxed,
                                                 'residual': line.residual,
+                                                'de_residual': line.residual,
                                                 'currency_id': line.currency_id.id,
                                                 'origin': line.origin,
                                                 'date_invoice': line.date_invoice,
@@ -105,6 +243,7 @@ class PartnerPayment(models.Model):
                                                     'amount_total': line.amount_total,
                                                     'amount_untaxed': line.amount_untaxed,
                                                     'residual': line.residual,
+                                                    'de_residual': line.residual,
                                                     'currency_id': line.currency_id.id,
                                                     'origin': line.origin,
                                                     'date_invoice': line.date_invoice,
@@ -143,6 +282,7 @@ class PartnerPayment(models.Model):
                                                 'amount_total': line.amount_total,
                                                 'amount_untaxed': line.amount_untaxed,
                                                 'residual': line.residual,
+                                                'de_residual': line.residual,
                                                 'currency_id': line.currency_id.id,
                                                 'origin': line.origin,
                                                 'date_invoice': line.date_invoice,
@@ -157,7 +297,6 @@ class PartnerPayment(models.Model):
                                                 }
                                          ])
                 rec.invoice_ids = list
-
         else:
             if self.res_person_id:
                 for rec in self:
@@ -178,6 +317,7 @@ class PartnerPayment(models.Model):
                                                     'amount_total': line.amount_total,
                                                     'amount_untaxed': line.amount_untaxed,
                                                     'residual': line.residual,
+                                                    'de_residual': line.residual,
                                                     'currency_id': line.currency_id.id,
                                                     'origin': line.origin,
                                                     'date_invoice': line.date_invoice,
@@ -337,11 +477,20 @@ class PartnerPayment(models.Model):
     #                                      ])
     #             rec.invoice_ids = list
     #
-    @api.multi
-    def print_customer_payment_report(self):
-        assert len(self) == 1
-        self.sent = True
-        return self.env['report'].get_action(self, 'pharmacy_mgmnt.customer_payment_invoice')
+    # @api.multi
+    # def print_customer_payment_report(self):
+    #     assert len(self) == 1
+    #     self.sent = True
+    #     return self.env['report'].get_action(self, 'pharmacy_mgmnt.customer_payment_invoice')
+
+    # @api.multi
+    # @api.onchange("invoice_ids")
+    # def onchange_select(self):
+    #     for record in self:
+    #         if record.payment_amount:
+    #             for rec in record.invoice_ids:
+    #                 if rec.select == True:
+    #                     rec.residual = 0.0
 
     @api.onchange('invoice_ids')
     def onchange_compute(self):
@@ -362,13 +511,104 @@ class PartnerPayment(models.Model):
         for record in self:
             if record.total_amount and record.payment_amount:
                 difference = record.total_amount - record.payment_amount
-                if difference < 0:
-                    raise osv.except_osv(_('Warning!'), _("Total amount is less than payment amount."))
+                # if difference < 0:
+                    # raise osv.except_osv(_('Warning!'), _("Total amount is less than payment amount."))
                 record.balance_amount = max(difference, 0.0)
+
+    # @api.multi
+    # @api.onchange('payment_amount')
+    # def onchange_payment_amt(self):
+    #     self.de_residual = self.payment_amount
+    #     for record in self.invoice_ids:
+    #         if record.select:
+    #             amount = 0
+    #             invoice = record.invoice_id
+    #             if self.de_residual > 0:
+    #                 if invoice.residual < self.de_residual:
+    #                     amount = invoice.residual
+    #                 else:
+    #                     amount = self.de_residual
+    #                 # self.voucher_relation_id.amount = self.payment_amount
+    #                 if amount == invoice.residual:
+    #                     invoice.state = 'paid'
+    #                     invoice.residual = 0
+    #                     invoice.paid_bool = True
+    #             else:
+    #
+    #                 move = self.env['account.move']
+    #                 move_line = self.env['account.move.line']
+    #
+    #                 values5 = {
+    #                     'journal_id': 9,
+    #                     'date': self.date,
+    #                     'tds_id': invoice.id
+    #                     # 'period_id': self.period_id.id,623393
+    #                 }
+    #                 move_id = move.create(values5)
+    #                 balance_amount = invoice.residual - payment_amount
+    #                 balance_amount += invoice.amount_tax
+    #                 values4 = {
+    #                     'account_id': 25,
+    #                     'name': 'payment for invoice No ' + str(invoice.number2),
+    #                     'debit': 0.0,
+    #                     'credit': balance_amount,
+    #                     'move_id': move_id.id,
+    #                     'cheque_no': self.cheque_no,
+    #                     'invoice_no_id2': invoice.id,
+    #                 }
+    #                 line_id1 = move_line.create(values4)
+    #
+    #                 values6 = {
+    #                     'account_id': invoice.account_id.id,
+    #                     'name': 'Payment For invoice No ' + str(invoice.number2),
+    #                     'debit': balance_amount,
+    #                     'credit': 0.0,
+    #                     'move_id': move_id.id,
+    #                     'cheque_no': self.cheque_no,
+    #                     # 'invoice_no_id2': line.bill_no.id,
+    #                 }
+    #                 line_id2 = move_line.create(values6)
+    #
+    #                 invoice.move_id = move_id.id
+    #                 invoice.move_lines = move_id.line_id.ids
+    #                 move_id.button_validate()
+    #                 move_id.post()
+    #                 name = move_id.name
+    #                 self.voucher_relation_id.write({
+    #                     'move_id': move_id.id,
+    #                     'state': 'posted',
+    #                     'number': name,
+    #                 })
+    #
+    #             payment_amount = payment_amount - amount
+    #             # self.state = 'paid'
+    # payment_records = self.env['account.invoice'].search(
+    #     [('partner_id', '=', self.partner_id.id), ('state', '!=', 'draft')])
+    # print("records invoice", payment_records)
+    # record_count = len(payment_records)
+    # count = 0
+    # if payment_records:
+    #     for rec in payment_records:
+    #         if rec.state == 'paid':
+    #             count = count + 1
+    # if count == record_count:
+    #     print("all payments are done")
+    #     customer_details = self.env['res.partner'].browse(self.partner_id.id)
+    #     if customer_details:
+    #         date_today = self.date
+    #         x = datetime.strptime(date_today, '%Y-%m-%d')
+    #         next_date = x + relativedelta(days=customer_details.days_credit_limit)
+    #         cal_date = datetime.strftime(next_date, '%Y-%m-%d')
+    #         customer_details.write({'credit_end_date': cal_date})
+    #
+    # else:
+    #     print("there are payments to be completed")
+
+    # return True
 
     @api.multi
     def action_payment_all(self, context=None):
-        payment_amount = self.payment_amount
+        payment_amount = self.calc_amount
         for record in self.invoice_ids:
             if record.select:
                 amount = 0
@@ -378,7 +618,7 @@ class PartnerPayment(models.Model):
                         amount = invoice.residual
                     else:
                         amount = payment_amount
-                    self.voucher_relation_id.amount = self.payment_amount
+                    self.voucher_relation_id.amount = self.calc_amount
                     if amount == invoice.residual:
                         invoice.state = 'paid'
                         invoice.paid_bool = True
@@ -398,7 +638,7 @@ class PartnerPayment(models.Model):
                         balance_amount += invoice.amount_tax
                         values4 = {
                             'account_id': 25,
-                            'name': 'payment for invoice No ' + str(invoice.number2),
+                            'name': 'payment for invoice No ' + str(invoice.number),
                             'debit': 0.0,
                             'credit': balance_amount,
                             'move_id': move_id.id,
@@ -409,7 +649,67 @@ class PartnerPayment(models.Model):
 
                         values6 = {
                             'account_id': invoice.account_id.id,
-                            'name': 'Payment For invoice No ' + str(invoice.number2),
+                            'name': 'Payment For invoice No ' + str(invoice.number),
+                            'debit': balance_amount,
+                            'credit': 0.0,
+                            'move_id': move_id.id,
+                            'cheque_no': self.cheque_no,
+                            # 'invoice_no_id2': line.bill_no.id,
+                        }
+                        line_id2 = move_line.create(values6)
+
+                        invoice.move_id = move_id.id
+                        invoice.move_lines = move_id.line_id.ids
+                        move_id.button_validate()
+                        move_id.post()
+                        name = move_id.name
+                        self.voucher_relation_id.write({
+                            'move_id': move_id.id,
+                            'state': 'posted',
+                            'number': name,
+                        })
+                    payment_amount = payment_amount - amount
+                    # self.state = 'paid'
+            else:
+                amount = 0
+                invoice = record.invoice_id
+                if payment_amount > 0:
+                    if invoice.residual < payment_amount:
+                        amount = invoice.residual
+                    else:
+                        amount = payment_amount
+                    self.voucher_relation_id.amount = self.calc_amount
+                    if amount == invoice.residual:
+                        invoice.state = 'paid'
+                        invoice.paid_bool = True
+                    else:
+
+                        move = self.env['account.move']
+                        move_line = self.env['account.move.line']
+
+                        values5 = {
+                            'journal_id': 9,
+                            'date': self.date,
+                            'tds_id': invoice.id
+                            # 'period_id': self.period_id.id,623393
+                        }
+                        move_id = move.create(values5)
+                        balance_amount = invoice.residual - payment_amount
+                        balance_amount += invoice.amount_tax
+                        values4 = {
+                            'account_id': 25,
+                            'name': 'payment for invoice No ' + str(invoice.number),
+                            'debit': 0.0,
+                            'credit': balance_amount,
+                            'move_id': move_id.id,
+                            'cheque_no': self.cheque_no,
+                            'invoice_no_id2': invoice.id,
+                        }
+                        line_id1 = move_line.create(values4)
+
+                        values6 = {
+                            'account_id': invoice.account_id.id,
+                            'name': 'Payment For invoice No ' + str(invoice.number),
                             'debit': balance_amount,
                             'credit': 0.0,
                             'move_id': move_id.id,

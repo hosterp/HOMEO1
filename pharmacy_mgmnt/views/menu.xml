@@ -1046,6 +1046,7 @@
                         <group>
                             <!--                            <field name="journal_id" string="Payment Method"/>-->
                             <field name="payment_method"/>
+                            <field name="payment_amount"  string="Payment Amount" />
                             <field name="cheque_no" attrs="{'invisible': [('payment_method','!=','cheque')]}"/>
                             <field name="cheque_date" attrs="{'invisible': [('payment_method','!=','cheque')]}"/>
                         </group>
@@ -1069,8 +1070,8 @@
                                     <field name="date_due" invisible="1"/>
                                     <field name="origin" invisible="1"/>
                                     <field name="currency_id" groups="base.group_multi_currency"/>
-                                    <field name="residual" sum="Residual Amount"/>
-                                    <field name="amount_untaxed" sum="Untaxed Amount"/>
+                                    <field name="residual" sum="Residual Amount" invisible="0"/>
+                                    <field name="amount_untaxed" sum="Untaxed Amount" invisible="1"/>
                                     <field name="amount_tax" sum="Tax Amount" invisible="1"/>
                                     <field name="amount_total" sum="Total Amount"/>
                                     <field name="state" readonly="1"/>
@@ -1087,9 +1088,9 @@
                         <field name="remarks"/>
                     </group>
                     <group>
-                        <field name="total_amount"/>
-                        <field name="payment_amount"/>
-                        <field name="balance_amount"/>
+                        <field name="total_amount" string="Total Amount" />
+                        <field name="balance_amount"  string="Balance Amount"/>
+                        <field name="calc_amount"  string="Available Balance"  attrs="{'invisible': [('state','=','paid')]}"/>
                     </group>
                 </form>
             </field>

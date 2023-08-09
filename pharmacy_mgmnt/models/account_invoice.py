@@ -2144,11 +2144,9 @@ class AccountInvoice(models.Model):
                 # Get the correct line residual amount
                 if line.currency_id == record.currency_id:
                     line_amount = line.amount_residual_currency if line.currency_id else line.amount_residual
-                    print("1st line amount",line_amount)
                 else:
                     from_currency = line.company_id.currency_id.with_context(date=line.date)
                     line_amount = from_currency.compute(line.amount_residual, record.currency_id)
-                    print("2nd line amount", line_amount)
                 # For partially reconciled lines, split the residual amount
                 if line.reconcile_partial_id:
                     partial_reconciliation_invoices = set()
@@ -2157,7 +2155,6 @@ class AccountInvoice(models.Model):
                             partial_reconciliation_invoices.update([pline.invoice.id])
                     line_amount = record.currency_id.round(line_amount / len(partial_reconciliation_invoices))
                     partial_reconciliations_done.append(line.reconcile_partial_id.id)
-                    print("1st line amount", line_amount)
                 record.residual += line_amount
             record.residual = max(record.residual, 0.0)
             if record.type == "out_invoice":
