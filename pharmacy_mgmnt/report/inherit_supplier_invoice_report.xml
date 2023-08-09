@@ -56,10 +56,10 @@
                                     <strong>Address:</strong>
                                     <span t-field="o.address_new"/>
                                 </div>
-                                <div t-if="o.partner_id.phone">
-                                        <strong>Phone Number:</strong>
-                                        <span t-field="o.partner_id.phone"/>
-                                </div>
+<!--                                <div t-if="o.partner_id.phone">-->
+<!--                                        <strong>Phone Number:</strong>-->
+<!--                                        <span t-field="o.partner_id.phone"/>-->
+<!--                                </div>-->
                           </div>
                         <div>
                             <div class="left-aligned-div">
