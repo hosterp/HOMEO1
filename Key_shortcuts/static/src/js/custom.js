@@ -120,6 +120,15 @@ $.shortcut('121', function() {
 //            }, 1000);
 //          }
 //        });
+$(document).ready(function() {
+  check=$('td[data-field="select"] input[type="checkbox"]')
+  $(document).on("change",check, function() {
+//      alert('checked');
+      $(".oe_form_button_save").trigger('click');
+//      $('.oe_button oe_form_button_edit').trigger('click');
+  });
+});
+
 
 
 

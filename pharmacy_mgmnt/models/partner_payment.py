@@ -130,65 +130,6 @@ class PartnerPayment(models.Model):
     #                 self.calc_amount = calc_value
     #             print(calc_value, 'calc_valuecalc_valuecalc_value')
     #             print(self.pays,'payspausysy')
-
-    # def onchange_de_residual(self):
-    #     print('shooo')
-    # @api.multi
-    # @api.onchange('payment_amount')
-    # def onchange_payment_amount(self):
-    #     self.calc_amount = self.payment_amount
-    #     print(self.calc_amount,'self.calc_amountself.calc_amountself.calc_amountself.calc_amount')
-    #         if record.select == True:
-    #             print(record.partner_id.name,record.residual)
-    # invoice = record.invoice_id
-    # residual = 0
-    # payment_amount = 0
-    # for recs in invoice:
-    #     # residual = recs.residual
-    #     # payment_amount1 =  self.payment_amount
-    #     # print(residual)
-    #     # print(payment_amount1)
-    #     if recs.residual > self.payment_amount:
-    #         recs.residual = recs.residual - self.payment_amount
-    #         print(recs.residual, "1")
-    #         # self.payment_amount = 00.0
-    #     if recs.residual == self.payment_amount:
-    #         recs.residual = 00.0
-    #         recs.state = 'paid'
-    #         print(recs.residual, "2")
-    #     if recs.residual < self.payment_amount:
-    #         self.payment_amount = self.payment_amount - recs.residual
-    #         recs.residual = 00.0
-    #         recs.state = 'paid'
-    #         print(recs.residual, "3")
-
-    # res_amount = recs.residual
-    # recs.residual -= amount
-    # amount -= res_amount
-    # print( recs.residual," recs.residual")
-    # print(amount,"amount")
-    # pay_amt = self.payment_amount
-    # for rec in self.invoice_ids:
-    #     print(pay_amt, "0")
-    #     if rec.select == True:
-    #         if rec.residual > float(pay_amt):
-    #             rec.residual -= float(pay_amt)
-    #             print(rec.residual,"1")
-    #             print(pay_amt,"1")
-    #             pay_amt = 0.0
-    #         if rec.residual == pay_amt:
-    #             rec.residual = 0.0
-    #             pay_amt = 0.0
-    #             rec.state = 'paid'
-    #             print(rec.residual, "2")
-    #             print(pay_amt, "2")
-    #         if rec.residual < float(pay_amt):
-    #             pay_amt -= rec.residual
-    #             rec.residual = 0.0
-    #             rec.state = 'paid'
-    #             print(rec.residual, "3")
-    #             print(pay_amt, "3")
-
     # modified code
     #
     @api.onchange('partner_id')
@@ -756,6 +697,7 @@ class PartnerPayment(models.Model):
 
         else:
             print("there are payments to be completed")
+            self.state = 'paid'
 
         return True
 
