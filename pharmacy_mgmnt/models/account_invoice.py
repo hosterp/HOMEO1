@@ -1174,64 +1174,88 @@ class AccountInvoice(models.Model):
     hold_invoice_id = fields.Many2one("account.invoice", domain=[('type', '=', 'out_invoice'), ('hold_invoice', '=', True)])
     partner_id=fields.Many2one('res.partner',default=1)
     cus_inv_number = fields.Char()
-
+    advance_amount=fields.Float('Advance Amount', related="partner_id.advance_amount")
+    cus_invoice_id=fields.Many2one("account.invoice", domain=[('type', '=', 'out_invoice'), ('cus_invoice', '=', True)])
 
     @api.multi
     def previous_invoice(self):
-        if self.id:
+        next_inv = self.env['account.invoice'].search(
+            [(('id', '=', self.id - 1))])
+        print(next_inv,'next_inv')
+        if next_inv:
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=452" % (
+                base_url, next_inv)
             return {
-                'view_mode': 'form',
-                'res_id': self.id - 1,
-                'res_model': 'account.invoice',
-                'view_id': self.env.ref('account.invoice_form').id,
-                'type': 'ir.actions.act_window',
-                'context': {'type': 'out_invoice'},
-                'target': 'current',
-                'clear': 1,
+                'type': 'ir.actions.act_url',
+                'url': redirect_url,
+                'target': 'self',
             }
+            # return {
+            #     'view_mode': 'form',
+            #     'res_id': self.id - 1,
+            #     'res_model': 'account.invoice',
+            #     'view_id': self.env.ref('account.invoice_form').id,
+            #     'type': 'ir.actions.act_window',
+            #     'context': {'type': 'out_invoice'},
+            #     'target': 'current',
+            #     'clear': 1,
+            # }
         else:
             raise Warning("Create a new record")
-        # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        # redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
-        #     base_url, self.id - 1)
-        # return {
-        #     'type': 'ir.actions.act_url',
-        #     'url': redirect_url,
-        #     'target': 'self',
-        # }
+
 
     @api.multi
     def next_invoice(self):
         next_inv = self.env['account.invoice'].search(
             [(('id', '=', self.id + 1))])
         if next_inv:
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=452" % (
+                base_url, next_inv)
             return {
-                'view_mode': 'form',
-                'res_id': self.id + 1,
-                'res_model': 'account.invoice',
-                'view_id': self.env.ref('account.invoice_form').id,
-                'type': 'ir.actions.act_window',
-                'context': {'type': 'out_invoice'},
-                'target': 'current',
-                'clear': 1,
+                'type': 'ir.actions.act_url',
+                'url': redirect_url,
+                'target': 'self',
             }
+            # return {
+            #     'view_mode': 'form',
+            #     'res_id': self.id + 1,
+            #     'res_model': 'account.invoice',
+            #     'view_id': self.env.ref('account.invoice_form').id,
+            #     'type': 'ir.actions.act_window',
+            #     'context': {'type': 'out_invoice'},
+            #     'target': 'current',
+            #     'clear': 1,
+            # }
         else:
             raise Warning("Create a new record")
-        # if self.id + 1:
-        #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        #     redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
-        #         base_url, self.id + 1)
-        #     return {
-        #         'type': 'ir.actions.act_url',
-        #         'url': redirect_url,
-        #         'target': 'self',
-        #     }
-        # else:
-        #     return {
-        #         'type': 'ir.actions.act_window.message',
-        #         'message': _('No customer invoice found '),
-        #     }
 
+    @api.multi
+    def onchange_cus_invoice_id(self):
+        if self.cus_invoice_id:
+            # hold = self.env['account.invoice'].search([('id','=',self.hold_invoice_id.id),('hold_invoice','=',True),('type','=','out_invoice')])
+            # print(hold.hold_invoice,"hold")
+            # print(hold.id,"hold.id")
+            # print(self.hold_invoice_id.id,"self.hold_invoice_id")
+            base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=452" % (
+                base_url, self.cus_invoice_id.id)
+            return {
+                'type': 'ir.actions.act_url',
+                'url': redirect_url,
+                'target': 'self',
+            }
+            # return {
+            #     'name': _('Holding Invoice'),  # Title of the wizard
+            #     'view_mode': 'form',  # Display the wizard in form view
+            #     'res_id': self.hold_invoice_id.id,  # ID of the created wizard record
+            #     'res_model': 'account.invoice',  # Model of the wizard
+            #     'type': 'ir.actions.act_window',
+            #     'target': 'self',  # Open the wizard in a new window or tab
+            # }
+        else:
+            pass
 
     @api.multi
     def onchange_hold_invoice_id(self):

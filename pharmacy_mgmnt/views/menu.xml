@@ -1077,6 +1077,7 @@
                         <group>
                             <!--                            <field name="journal_id" string="Payment Method"/>-->
                             <field name="payment_method"/>
+                            <field name="advance_amount"  string="Advance Amount" />
                             <field name="payment_amount"  string="Payment Amount" />
                             <field name="cheque_no" attrs="{'invisible': [('payment_method','!=','cheque')]}"/>
                             <field name="cheque_date" attrs="{'invisible': [('payment_method','!=','cheque')]}"/>

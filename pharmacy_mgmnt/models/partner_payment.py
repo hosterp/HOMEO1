@@ -16,6 +16,7 @@ class InvoiceDetails(models.Model):
     de_residual = fields.Float()
     calc = fields.Float()
 
+
     # def onchange_de_residual(self):
     #     print('shooo')
 
@@ -109,7 +110,7 @@ class PartnerPayment(models.Model):
     # invoice_ids = fields.One2many('invoice.details', 'partner_payment_id', compute='generate_lines', readonly=False,
     #                               store=True)
     state = fields.Selection([('new', 'New'), ('draft', 'Draft'), ('paid', 'Paid')])
-
+    advance_amount = fields.Float('Advance Amount', related="partner_id.advance_amount")
     @api.onchange('payment_amount')
     def onchange_payment_amount(self):
         self.calc_amount = self.payment_amount
