@@ -1184,7 +1184,7 @@ class AccountInvoice(models.Model):
         print(next_inv,'next_inv')
         if next_inv:
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=452" % (
+            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
                 base_url, next_inv)
             return {
                 'type': 'ir.actions.act_url',
@@ -1211,7 +1211,7 @@ class AccountInvoice(models.Model):
             [(('id', '=', self.id + 1))])
         if next_inv:
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=452" % (
+            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
                 base_url, next_inv)
             return {
                 'type': 'ir.actions.act_url',
@@ -1239,7 +1239,7 @@ class AccountInvoice(models.Model):
             # print(hold.id,"hold.id")
             # print(self.hold_invoice_id.id,"self.hold_invoice_id")
             base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=452" % (
+            redirect_url = "%s/web#id=%d&view_type=form&model=account.invoice&menu_id=331&action=400" % (
                 base_url, self.cus_invoice_id.id)
             return {
                 'type': 'ir.actions.act_url',
