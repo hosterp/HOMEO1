@@ -120,14 +120,14 @@ $.shortcut('121', function() {
 //            }, 1000);
 //          }
 //        });
-$(document).ready(function() {
-  check=$('td[data-field="select"] input[type="checkbox"]')
-  $(document).on("change",check, function() {
-//      alert('checked');
-      $(".oe_form_button_save").trigger('click');
-//      $('.oe_button oe_form_button_edit').trigger('click');
-  });
-});
+//$(document).ready(function() {
+//  check=$('td[data-field="select"] input[type="checkbox"]')
+//  $(document).on("change",check, function() {
+////      alert('checked');
+//      $(".oe_form_button_save").trigger('click');
+////      $('.oe_button oe_form_button_edit').trigger('click');
+//  });
+//});
 
 
 
@@ -140,6 +140,19 @@ $(document).ready(function() {
      quantity=$('[id^="DataTables_Table_"] tbody td[data-field="quantity_selected"]')
 //    ROBIN'S CODE
     $( document ).ready(function() {
+    $(window).on("hashchange", function() {
+        var urlHash = window.location.hash;
+        if (urlHash.includes('model=partner.payment') && urlHash.includes('menu_id=346')) {
+//            alert('ready');
+            $(document).on("change", function() {
+                $(".oe_form_button_save").trigger('click');
+            });
+        }
+        else {
+
+            $(document).off("change");
+        }
+    });
 
 
 //    $(document).on('keydown','#oe-field-input-14',function(event){
